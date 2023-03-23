@@ -1,5 +1,5 @@
 {
-  "name": "facebook.js",
+  "name": "@xaviabot/facebook.js",
   "version": "0.0.1",
   "description": "A NodeJS package to help interacting with Facebook Messenger API (fca-unofficial)",
   "main": "lib/index.js",
