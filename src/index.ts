@@ -1,4 +1,6 @@
 import login, { AppstateData, IFCAU_Options } from '@xaviabot/fca-unofficial';
+import { Express } from 'express';
+import createHttpsServer from './server.js';
 
 declare function getAppstate(EState: string, secret: string): AppstateData;
 
@@ -12,6 +14,10 @@ export class MSGStore {
     #plugins: Plugin[];
     constructor() {
         this.#plugins = [];
+    }
+
+    openServer(port: number = 3001, app?: Express) {
+        createHttpsServer(port, app);
     }
 
     async loginWithEmail(email: string, password: string, options: Partial<IFCAU_Options>) {
