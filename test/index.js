@@ -6,6 +6,7 @@ const client = new Client({
     ignoreMessageInCommandEvent: true,
 });
 
+client.openServer(config.port);
 client.loginWithAppState(config.appstate, { selfListen: false });
 client.on("ready", (api, curID) => {
     console.log("LOGGED IN AS", curID);

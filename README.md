@@ -67,7 +67,7 @@ client.on("message", (msg) => {
 });
 ```
 
-<details><summary><h3 style="display: inline">Screenshot<h3></summary>
+<details><summary>Screenshot</summary>
 
 ![message_demo](https://i.ibb.co/9rvPFRQ/image-2023-03-27-010100006.png)
 
@@ -102,7 +102,7 @@ client.on("command", async (cmd) => {
 })
 ```
 
-<details><summary><h3 style="display: inline">Screenshot<h3></summary>
+<details><summary>Screenshot</summary>
 
 ![message_demo](https://i.ibb.co/9sMCHyX/image-2023-03-27-010125613.png)
 

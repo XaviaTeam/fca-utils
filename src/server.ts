@@ -1,14 +1,14 @@
 import express, { Express } from 'express';
-import https from 'https';
+import http from 'http';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
-export default function createHttpsServer(port: number, app?: Express) {
-    let tServer: https.Server | null = null;
+export default function createHttpServer(port: number, app?: Express) {
+    let tServer: http.Server | null = null;
 
     if (app) {
-        tServer = https.createServer(app);
+        tServer = http.createServer(app);
     } else {
         const app = express();
         app.use(cors());
@@ -22,7 +22,11 @@ export default function createHttpsServer(port: number, app?: Express) {
             }),
         );
 
-        tServer = https.createServer(app);
+        app.get('/', (req, res) => {
+            res.send('Made with fca-utils 💖');
+        });
+
+        tServer = http.createServer(app);
     }
 
     tServer.listen(port, () => {
