@@ -37,7 +37,7 @@ export interface ClientOptions {
      */
     prefix?: string;
     /**
-     * @default false
+     * @default true
      * @description If true, the message event will not be emitted when the message is a command
      */
     ignoreMessageInCommandEvent?: boolean;
@@ -45,7 +45,7 @@ export interface ClientOptions {
 
 export class Client extends EventEmitter {
     #prefix: string | null = null;
-    #ignoreMessageInCommandEvent: boolean = false;
+    #ignoreMessageInCommandEvent: boolean = true;
     #api: IFCAU_API | null = null;
 
     constructor(options?: ClientOptions) {
