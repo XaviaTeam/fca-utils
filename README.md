@@ -1,4 +1,7 @@
+# BETA VERSION
+
 # fca-utils
+
 A NodeJS package to interact with Facebook Messenger API (fca-unofficial) <br/>
 Inspired by [discord.js](https://www.npmjs.com/package/discord.js)
 
@@ -108,7 +111,7 @@ client.on("command", async (cmd) => {
 __cmd__ properties:
 - `cmd.message` - same as the msg object in "message" event
 - `cmd.name` - name of the command
-- `cmd.args` - array of command arguments, for example:
+- `cmd.commandArgs` - array of command arguments, for example:
     - `!ping hello world` -> `["hello", "world"]`
 
 <br/><hr/>
