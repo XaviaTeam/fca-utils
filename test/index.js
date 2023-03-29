@@ -33,6 +33,9 @@ client.on("command", async (cmd) => {
     try {
         if (cmd.name === "ping") {
             await cmd.message.reply("Pong!");
+
+            await cmd.message.sendAttachment("https://i.ibb.co/kM9mPKv/image-2023-03-29-085007164.png");
+            await cmd.message.sendAttachment("./test/1nXr.gif");
         }
     } catch (e) {
         console.error(e);

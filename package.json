@@ -1,6 +1,6 @@
 {
   "name": "fca-utils",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A NodeJS package to help interacting with Facebook Messenger API (fca-unofficial)",
   "main": "lib/index.js",
   "type": "module",
@@ -31,12 +31,11 @@
     "typescript": "^5.0.2"
   },
   "dependencies": {
-    "@xaviabot/fca-unofficial": "^1.3.15",
+    "@xaviabot/fca-unofficial": "^1.3.18",
     "axios": "^1.3.4",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "express-rate-limit": "^6.7.0",
-    "helmet": "^6.0.1",
-    "node-fetch": "^3.3.1"
+    "helmet": "^6.0.1"
   }
 }
