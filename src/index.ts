@@ -14,21 +14,22 @@ export const DEFAULT_OPTIONS: Partial<IFCAU_Options> = {
 }
 
 export type SendMessage = (message: string | MessageObject) => Promise<{ threadID: string, messageID: string, timestamp: number }>;
-export type SendAttachment = (attachment: string | { title: string, url_or_path: string }, reply: boolean) => Promise<{ threadID: string, messageID: string, timestamp: number }>;
+export type SendAttachmentWR = (attachment: string | { title: string, url_or_path: string }, reply: boolean) => Promise<{ threadID: string, messageID: string, timestamp: number }>;
+export type SendAttachment = (attachment: string | { title: string, url_or_path: string }) => Promise<{ threadID: string, messageID: string, timestamp: number }>;
 export type EventMessage = Pick<IFCAU_ListenMessage, Extract<keyof IFCAU_ListenMessage, 'type'>> extends infer R ? Extract<IFCAU_ListenMessage, { type: "event" }> extends infer S ? R & S : never : never;
 export type TextMessage = Pick<IFCAU_ListenMessage, Extract<keyof IFCAU_ListenMessage, 'type'>> extends infer R ? Extract<IFCAU_ListenMessage, { type: "message" | "message_reply" }> extends infer S ? R & S : never : never;
 export type ReactionMessage = Pick<IFCAU_ListenMessage, Extract<keyof IFCAU_ListenMessage, 'type'>> extends infer R ? Extract<IFCAU_ListenMessage, { type: "reaction" }> extends infer S ? R & S : never : never;
 export type UnsendMessage = Pick<IFCAU_ListenMessage, Extract<keyof IFCAU_ListenMessage, 'type'>> extends infer R ? Extract<IFCAU_ListenMessage, { type: "unsend" }> extends infer S ? R & S : never : never;
 export type OtherMessage = Exclude<IFCAU_ListenMessage, EventMessage | TextMessage | ReactionMessage | UnsendMessage>;
-export type CommandsProps = { name: string, commandArgs: string[], message: TextMessage & { send: SendMessage, reply: SendMessage, sendAttachment: SendAttachment } };
+export type CommandsProps = { name: string, commandArgs: string[], message: TextMessage & { send: SendMessage, reply: SendMessage, sendAttachment: SendAttachmentWR } };
 
 export declare interface Client {
     on(event: 'ready', listener: (api: IFCAU_API, userID: string) => void): this;
     on(event: 'error', listener: (err: Error) => void): this;
-    on(event: 'message', listener: (message: TextMessage & { send: SendMessage, reply: SendMessage, sendAttachment: SendAttachment }) => void): this;
+    on(event: 'message', listener: (message: TextMessage & { send: SendMessage, reply: SendMessage, sendAttachment: SendAttachmentWR }) => void): this;
     on(event: 'command', listener: (props: CommandsProps) => void): this;
-    on(event: 'reaction', listener: (message: ReactionMessage & { send: SendMessage }) => void): this;
-    on(event: 'unsend', listener: (message: UnsendMessage & { send: SendMessage }) => void): this;
+    on(event: 'reaction', listener: (message: ReactionMessage & { send: SendMessage, sendAttachment: SendAttachment }) => void): this;
+    on(event: 'unsend', listener: (message: UnsendMessage & { send: SendMessage, sendAttachment: SendAttachment }) => void): this;
     on(event: 'others', listener: (message: OtherMessage) => void): this;
     on(event: 'event', listener: (event: EventMessage) => void): this;
 }
@@ -163,13 +164,57 @@ export class Client extends EventEmitter {
                         const { threadID } = message;
                         this.emit('reaction', {
                             ...message,
-                            send: (message: string | MessageObject) => api.sendMessage(message, threadID)
+                            send: (message: string | MessageObject) => api.sendMessage(message, threadID),
+                            sendAttachment: async (attachment: string | { title: string, url_or_path: string }) => {
+                                const imageSource = typeof attachment === "string" ? attachment : attachment.url_or_path;
+                                const msgObj: MessageObject = {
+                                    body: typeof attachment === "string" ? "" : attachment.title,
+                                }
+
+                                const isExists = existsSync(imageSource);
+                                if (!isExists) {
+                                    try {
+                                        new URL(imageSource);
+                                        msgObj.attachment = await axios.get(imageSource, { responseType: 'stream' }).then(res => res.data);
+                                    } catch (err) {
+                                        if (err instanceof Error && err.message.includes('Invalid URL'))
+                                            throw new Error("Invalid image source, must be a valid URL or path to the file");
+                                        else throw err;
+                                    }
+                                } else {
+                                    msgObj.attachment = createReadStream(imageSource);
+                                }
+
+                                return this.#api!.sendMessage(msgObj, threadID);
+                            }
                         });
                     } else if (message.type === "message_unsend") {
                         const { threadID } = message;
                         this.emit('unsend', {
                             ...message,
-                            send: (message: string | MessageObject) => api.sendMessage(message, threadID)
+                            send: (message: string | MessageObject) => api.sendMessage(message, threadID),
+                            sendAttachment: async (attachment: string | { title: string, url_or_path: string }) => {
+                                const imageSource = typeof attachment === "string" ? attachment : attachment.url_or_path;
+                                const msgObj: MessageObject = {
+                                    body: typeof attachment === "string" ? "" : attachment.title,
+                                }
+
+                                const isExists = existsSync(imageSource);
+                                if (!isExists) {
+                                    try {
+                                        new URL(imageSource);
+                                        msgObj.attachment = await axios.get(imageSource, { responseType: 'stream' }).then(res => res.data);
+                                    } catch (err) {
+                                        if (err instanceof Error && err.message.includes('Invalid URL'))
+                                            throw new Error("Invalid image source, must be a valid URL or path to the file");
+                                        else throw err;
+                                    }
+                                } else {
+                                    msgObj.attachment = createReadStream(imageSource);
+                                }
+
+                                return this.#api!.sendMessage(msgObj, threadID);
+                            }
                         });
                     } else this.emit('others', message);
                 });
