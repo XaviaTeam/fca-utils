@@ -31,7 +31,7 @@
     "typescript": "^5.0.2"
   },
   "dependencies": {
-    "@xaviabot/fca-unofficial": "^1.3.23",
+    "@xaviabot/fca-unofficial": "^1.3.24",
     "axios": "^1.3.4"
   }
 }
