@@ -1,6 +1,6 @@
 {
   "name": "fca-utils",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A NodeJS package to help interacting with Facebook Messenger API (fca-unofficial)",
   "main": "lib/index.js",
   "type": "module",
